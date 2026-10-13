@@ -8,6 +8,25 @@ The public repository for the **ISPD 2027 Contest: MCMM Post-CTS Buffering and S
 
 Two designs are public: `aes` (top `aes_cipher_top`) and `jpeg` (top `jpeg_encoder`). Six public benchmarks are planned; final scores come from hidden benchmarks.
 
+## Running the container
+
+The supported evaluation environment is the `udxs/ispd27:v1` image — Ubuntu 24.04 with OpenROAD, Yosys, KLayout, Kepler-Formal, and Conda (see [docker/README.md](docker/README.md)). It ships the **tools only**: benchmarks, platform, and evaluator all come from this repo, so mount it.
+
+```bash
+docker pull udxs/ispd27:v1        # ~33 GB unpacked
+
+docker run -it --rm \
+  -v "$PWD":/workspace/ISPD27-Contest \
+  -w /workspace/ISPD27-Contest \
+  udxs/ispd27:v1
+```
+
+- `-it` is **required**: [docker/entrypoint.sh](docker/entrypoint.sh) ends with `exec </dev/tty`, so the container fails to start without a TTY. The entrypoint prints the banner, activates Conda base, and drops into a shell with `openroad` on `PATH`.
+- The container runs as **root** and writes root-owned files into the mounted repo. Add `--user $(id -u):$(id -g)` (and `-e HOME=/tmp` if Conda complains) to avoid that.
+- The entrypoint exports `OPENROAD_EXE` but **not** `KEPLER_FORMAL_EXE` — the evaluator looks up plain `kepler-formal` on `PATH`, so set `KEPLER_FORMAL_EXE` if it isn't found.
+- On networks that block Docker Hub, pull through a registry mirror and tag the result (e.g. `docker tag docker.1ms.run/udxs/ispd27:v1 udxs/ispd27:v1`). The mirror in `/etc/docker/daemon.json` must also actually serve this repo — some public mirrors only proxy an allowlist.
+- After `usermod -aG docker $USER`, the group applies only to **new** shells; use a fresh terminal or `sg docker -c '<command>'`.
+
 ## Running the evaluator
 
 The evaluator requires **OpenROAD** (`openroad`) and **Kepler Formal** (`kepler-formal`) on `PATH`, or set `OPENROAD_EXE` / `KEPLER_FORMAL_EXE`. The supported environment is the `udxs/ispd27:v1` container (see [docker/](docker/)). Unit tests do not need these tools.
