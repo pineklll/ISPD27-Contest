@@ -18,7 +18,7 @@ tar -xvzf oss-cad-suite.tgz
 rm oss-cad-suite.tgz
 
 apt update
-apt install g++ libboost-dev python3.9-dev capnproto libcapnp-dev libtbb-dev pkg-config bison flex doxygen libspdlog-dev libfmt-dev libboost-iostreams-dev zlib1g-dev
+apt install -y g++ libboost-dev python3-dev capnproto libcapnp-dev libtbb-dev pkg-config bison flex doxygen libspdlog-dev libfmt-dev libboost-iostreams-dev zlib1g-dev
 
 git clone --recurse-submodules https://github.com/keplertech/kepler-formal.git
 cd kepler-formal
@@ -30,8 +30,9 @@ cmake .. \
   -DCMAKE_CXX_FLAGS="-O3 -flto -DNDEBUG" \
   -DCMAKE_CXX_FLAGS_RELEASE="-O3  -flto -DNDEBUG" \
   -DCMAKE_EXE_LINKER_FLAGS="-flto"
-make -j
-make -j install
+make -j"$(nproc)"
+make -j"$(nproc)" install
+ldconfig
 
 
 

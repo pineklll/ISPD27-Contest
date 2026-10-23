@@ -2,9 +2,10 @@
 
 source /opt/miniconda3/etc/profile.d/conda.sh
 
-export PATH="/opt/oss-cad-suite/bin:/install/OpenROAD/bin":$PATH
+export PATH="/usr/local/bin:/opt/oss-cad-suite/bin:/install/OpenROAD/bin":$PATH
 export YOSYS_EXE=/opt/oss-cad-suite/bin/yosys
-export OPENROAD_EXE=/OpenROAD/build/bin/openroad
+export OPENROAD_EXE=/install/OpenROAD/bin/openroad
+export KEPLER_FORMAL_EXE=/usr/local/bin/kepler-formal
 
 cat /etc/motd
 
